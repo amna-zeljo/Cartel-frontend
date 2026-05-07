@@ -4,7 +4,7 @@ import colors from '../theme/colors';
 import { useCart } from '../context/CartContext';
 import CartItem from '../components/CartItem';
 
-export default function CartScreen() {
+export default function CartScreen({ onPlaceOrder, onViewHistory }) {
   const { cart, total } = useCart();
 
   return (
@@ -12,7 +12,9 @@ export default function CartScreen() {
       <View style={styles.header}>
         <Text style={styles.back}>‹</Text>
         <Text style={styles.title}>My Cart</Text>
-        <View style={{ width: 24 }} />
+        <TouchableOpacity onPress={onViewHistory} hitSlop={{ top: 8, left: 8, right: 8, bottom: 8 }}>
+          <Text style={styles.headerLink}>History</Text>
+        </TouchableOpacity>
       </View>
 
       <View style={styles.card}>
@@ -30,7 +32,7 @@ export default function CartScreen() {
             <Text style={styles.totalValue}>${total.toFixed(2)}</Text>
           </View>
 
-          <TouchableOpacity style={styles.primaryButton} onPress={() => {}}>
+          <TouchableOpacity style={styles.primaryButton} onPress={onPlaceOrder} disabled={cart.length === 0}>
             <Text style={styles.primaryText}>Place Order</Text>
           </TouchableOpacity>
 
@@ -65,6 +67,11 @@ const styles = StyleSheet.create({
   title: {
     color: colors.white,
     fontSize: 18,
+    fontWeight: '600',
+  },
+  headerLink: {
+    color: colors.white,
+    fontSize: 14,
     fontWeight: '600',
   },
   card: {
