@@ -9,6 +9,7 @@ import {
   Alert,
   Platform,
 } from 'react-native';
+import { useCart } from '../context/CartContext';
 
 const PRODUCTS = [
   { id: '1', name: 'Wireless Headphones', price: 79.99 },
@@ -21,8 +22,9 @@ const PRODUCTS = [
   { id: '8', name: 'Desk Lamp', price: 22.75 },
 ];
 
-export default function SearchScreen() {
+export default function SearchScreen({ navigation }) {
   const [searchText, setSearchText] = useState('');
+  const { itemCount } = useCart();
 
   const filteredProducts = useMemo(() => {
     return PRODUCTS.filter((product) =>
@@ -64,6 +66,21 @@ export default function SearchScreen() {
           value={searchText}
           onChangeText={setSearchText}
         />
+      </View>
+
+      <View style={styles.featureButtons}>
+        <Pressable
+          style={({ pressed }) => [styles.featureButton, pressed && styles.featureButtonPressed]}
+          onPress={() => navigation.navigate('Map')}
+        >
+          <Text style={styles.featureButtonText}>Store Map</Text>
+        </Pressable>
+        <Pressable
+          style={({ pressed }) => [styles.featureButton, pressed && styles.featureButtonPressed]}
+          onPress={() => navigation.navigate('Cart')}
+        >
+          <Text style={styles.featureButtonText}>Cart ({itemCount})</Text>
+        </Pressable>
       </View>
 
       <FlatList
@@ -112,6 +129,26 @@ const styles = StyleSheet.create({
   },
   listContent: {
     paddingBottom: 24,
+  },
+  featureButtons: {
+    flexDirection: 'row',
+    gap: 10,
+    marginBottom: 16,
+  },
+  featureButton: {
+    flex: 1,
+    backgroundColor: '#2563eb',
+    borderRadius: 12,
+    paddingVertical: 12,
+    alignItems: 'center',
+  },
+  featureButtonPressed: {
+    opacity: 0.85,
+  },
+  featureButtonText: {
+    color: '#ffffff',
+    fontSize: 15,
+    fontWeight: '700',
   },
   productCard: {
     backgroundColor: '#ffffff',

@@ -1,0 +1,20 @@
+
+> cartelapp@1.0.0 web
+> expo start --web --port 8081
+
+Starting project at C:\Users\DT User\Desktop\c\cartelApp\cartelApp
+Starting Metro Bundler
+
+Waiting on http://localhost:8081
+Logs for your project will appear below.
+Web .\index.js ░░░░░░░░░░░░░░░░  0.0% (0/1)
+Web .\index.js ▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓░ 99.9% (269/381)
+Web .\index.js ▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓░ 99.9% (549/551)
+Web Bundled 7973ms index.js (552 modules)
+ LOG  [web] Logs will appear in the browser console
+Web .\index.js ░░░░░░░░░░░░░░░░  0.0% (0/1)
+Web Bundled 207ms index.js (1 module)
+ LOG  [web] Logs will appear in the browser console
+Web .\index.js ░░░░░░░░░░░░░░░░  0.0% (0/1)
+Web Bundled 150ms index.js (1 module)
+ LOG  [web] Logs will appear in the browser console
