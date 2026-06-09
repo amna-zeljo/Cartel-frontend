@@ -1,13 +1,10 @@
 import React, { useState, useEffect } from 'react';
-import { CartProvider } from './src/context/CartContext';
-import { useCart } from './src/context/CartContext';
+import { Platform } from 'react-native';
+import { CartProvider, useCart } from './src/context/CartContext';
+import { ShoppingProvider } from './src/context/ShoppingContext';
 import CartScreen from './src/screens/CartScreen';
 import OrderConfirmationScreen from './src/screens/OrderConfirmationScreen';
 import HistoryScreen from './src/screens/HistoryScreen';
-import { Platform } from 'react-native';
-import { CartProvider } from './src/context/CartContext';
-import { ShoppingProvider } from './src/context/ShoppingContext';
-import CartScreen from './src/screens/CartScreen';
 import ProductViewScreen from './src/screens/ProductViewScreen';
 import ChooseMarketScreen from './src/screens/ChooseMarketScreen';
 
@@ -40,6 +37,7 @@ function AppContent() {
   }
 
   return <CartScreen onPlaceOrder={handlePlaceOrder} onViewHistory={() => setCurrentView('history')} />;
+}
 
 function pathToScreen(pathname) {
   if (pathname === '/product') {
@@ -135,4 +133,4 @@ export default function App() {
       <ShoppingProvider>{renderScreen()}</ShoppingProvider>
     </CartProvider>
   );
-}}
+}
