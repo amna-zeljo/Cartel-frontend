@@ -25,8 +25,9 @@ export default function HomeScreen() {
         api.getSavingsSummary(),
         api.getOrderHistory(),
       ]);
+
       setSummary(savings);
-      setOrders(history);
+      setOrders(Array.isArray(history) ? history : []);
     } catch (error) {
       console.error(error);
     } finally {
@@ -42,7 +43,11 @@ export default function HomeScreen() {
   );
 
   const formatDate = (iso) => {
+    if (!iso) return "Nepoznat datum";
+
     const date = new Date(iso);
+    if (Number.isNaN(date.getTime())) return "Nepoznat datum";
+
     return date.toLocaleDateString("bs-BA", {
       day: "2-digit",
       month: "short",
@@ -63,8 +68,9 @@ export default function HomeScreen() {
       <View style={styles.rowBetween}>
         <View>
           <Text style={styles.headerTitle}>Početna</Text>
-          <Text style={styles.subtitle}>Zdravo, {user?.name}</Text>
+          <Text style={styles.subtitle}>Zdravo, {user?.name || "korisniče"}</Text>
         </View>
+
         <Pressable onPress={logout}>
           <Text style={{ color: colors.primary, fontWeight: "600" }}>Odjava</Text>
         </Pressable>
@@ -72,41 +78,67 @@ export default function HomeScreen() {
 
       <View style={[styles.card, { backgroundColor: colors.primary }]}>
         <Text style={{ color: "#E8F5E9", fontSize: 14 }}>Vaša ušteda</Text>
+
         <Text style={{ color: "#FFF", fontSize: 32, fontWeight: "700", marginTop: 4 }}>
-          {summary?.total_savings?.toFixed(2) ?? "0.00"} KM
+          {Number(summary?.total_savings || 0).toFixed(2)} KM
         </Text>
+
         <Text style={{ color: "#C8E6C9", marginTop: 8, fontSize: 14 }}>
-          {summary?.message}
+          {summary?.message || "Historija uštede će se prikazati nakon prvih narudžbi."}
         </Text>
       </View>
 
-      <Text style={[styles.cardTitle, { marginBottom: 8, marginTop: 8 }]}>Historija kupovine</Text>
+      <Text style={[styles.cardTitle, { marginBottom: 8, marginTop: 8 }]}>
+        Historija kupovine ({orders.length})
+      </Text>
 
       <FlatList
         data={orders}
         keyExtractor={(item) => String(item.id)}
         refreshControl={<RefreshControl refreshing={loading} onRefresh={loadData} />}
         ListEmptyComponent={
-          <Text style={styles.emptyText}>Još nema narudžbi. Počnite kupovinu u Pretrazi!</Text>
+          <Text style={styles.emptyText}>
+            Još nema narudžbi. Počnite kupovinu u Pretrazi!
+          </Text>
         }
-        renderItem={({ item }) => (
-          <View style={styles.card}>
-            <View style={styles.rowBetween}>
-              <Text style={styles.cardTitle}>{item.market_name}</Text>
-              <Text style={{ color: colors.textSecondary, fontSize: 12 }}>
-                {formatDate(item.created_at)}
+        renderItem={({ item }) => {
+          const orderItems = Array.isArray(item.items) ? item.items : [];
+
+          const productPreview = orderItems
+            .slice(0, 3)
+            .map((orderItem) => orderItem.product_name || orderItem.name)
+            .filter(Boolean)
+            .join(", ");
+
+          return (
+            <View style={styles.card}>
+              <View style={styles.rowBetween}>
+                <Text style={styles.cardTitle}>{item.market_name || "Nepoznat market"}</Text>
+
+                <Text style={{ color: colors.textSecondary, fontSize: 12 }}>
+                  {formatDate(item.created_at)}
+                </Text>
+              </View>
+
+              <Text style={styles.cardSubtitle}>
+                {orderItems.length} proizvoda · Ukupno {Number(item.total || 0).toFixed(2)} KM
               </Text>
+
+              {productPreview ? (
+                <Text style={{ color: colors.textSecondary, marginTop: 4, fontSize: 12 }}>
+                  Proizvodi: {productPreview}
+                  {orderItems.length > 3 ? "..." : ""}
+                </Text>
+              ) : null}
+
+              {item.savings > 0 ? (
+                <Text style={{ color: colors.success, marginTop: 6, fontWeight: "600" }}>
+                  Ušteda: {Number(item.savings || 0).toFixed(2)} KM
+                </Text>
+              ) : null}
             </View>
-            <Text style={styles.cardSubtitle}>
-              {item.items.length} proizvoda · Ukupno {item.total.toFixed(2)} KM
-            </Text>
-            {item.savings > 0 ? (
-              <Text style={{ color: colors.success, marginTop: 6, fontWeight: "600" }}>
-                Ušteda: {item.savings.toFixed(2)} KM
-              </Text>
-            ) : null}
-          </View>
-        )}
+          );
+        }}
       />
     </View>
   );
